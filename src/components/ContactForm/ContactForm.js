@@ -1,25 +1,15 @@
 import { Component } from "react";
-import { GlobalStyle } from './GlobalStyle';
-import { nanoid } from 'nanoid'
-// import { ContactForm } from "./ContactForm/ContactForm";
 
-export class App extends Component {
 
-  state = {
-    contacts: [],
-    name: '',
-    number: '',
 
-  }
-
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    })
-  }
-
-  handleChange = evnt => {
+export class ContactForm extends Component {
+    state = {
+        contacts: [],
+        name: '',
+        number: ''
+    }
+    
+    handleChange = evnt => {
         console.log(evnt.currentTarget.value);
         const { name, value } = evnt.currentTarget
         this.setState({
@@ -32,23 +22,15 @@ export class App extends Component {
         e.preventDefault();
         const { contacts, name } = this.state;
 
-        contacts.push({name, id: nanoid()});
+        contacts.push(name);
 
-      console.log(this.state);
-      this.reset()
+        this.props.onSubmit(this.state)
 
     }
-  formSubmitHandler = data => {
-    console.log(data);
-  }
 
-  render() {
-    // let nameContact = "";
-    return (
-      <div>
-        <h1>Phonebook</h1>
-        {/* <ContactForm onSubmit={this.formSubmitHandler} /> */}
-        <form onSubmit={this.handleSubmitForm}>
+    render() {
+        return (
+            <form onSubmit={this.handleSubmitForm}>
                 <label>
                     Name
                     <input
@@ -76,15 +58,6 @@ export class App extends Component {
                 {/* <input type="password" name="password" /> */}
                 <button type="submit">Add contact</button>
             </form>
-        <div>
-          <h2>Contacts</h2>
-          <ul>
-            <li>{}</li>
-          </ul>
-        </div>
-        <GlobalStyle />
-      </div>
-      
-    );
-  }
+        )
+    }
 }
