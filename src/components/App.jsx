@@ -1,90 +1,75 @@
 import { Component } from "react";
 import { GlobalStyle } from './GlobalStyle';
-import { nanoid } from 'nanoid'
-// import { ContactForm } from "./ContactForm/ContactForm";
+
+import Filter from "./Filter";
+import ContactsList from "./ContactsList";
+import ContactForm from "./ContactForm";
 
 export class App extends Component {
 
   state = {
-    contacts: [],
-    name: '',
-    number: '',
-
+    contacts: [
+      {id: 'id-1', name: 'Rosie Simpson', number: '459-12-56'},
+      {id: 'id-2', name: 'Hermione Kline', number: '443-89-12'},
+      {id: 'id-3', name: 'Eden Clements', number: '645-17-79'},
+      {id: 'id-4', name: 'Annie Copeland', number: '227-91-26'},
+    ],
+    filter: ''
   }
 
-  reset = () => {
-    this.setState({
-      name: '',
-      number: '',
-    })
-  }
+  
 
   handleChange = evnt => {
         console.log(evnt.currentTarget.value);
         const { name, value } = evnt.currentTarget
         this.setState({
-        // name: evnt.currentTarget.value,
-            [name] : value
+          [name] : value
         })
     }
+  
+  handleChangeFilter = e => {
+    console.log(e.currentTarget.value);
+    this.setState({ filter: e.currentTarget.value });
+  };
 
-    handleSubmitForm = e => {
-        e.preventDefault();
-        const { contacts, name } = this.state;
-
-        contacts.push({name, id: nanoid()});
-
-      console.log(this.state);
-      this.reset()
-
-    }
   formSubmitHandler = data => {
     console.log(data);
   }
 
+  getVisibleNameFilter = () => {
+    const { filter,contacts } = this.state
+    const normalFilter = filter.toLowerCase();
+    
+    return contacts.filter(contact =>
+      contact.name.toLowerCase().includes(normalFilter)
+    )
+  }
+
+  deleteContact = id => {
+    this.setState(prevState => ({
+      contacts: prevState.contacts.filter(contact => contact.id !== id),
+    }));
+  };
+
   render() {
-    // let nameContact = "";
+    const { filter } = this.state;
+
+    const filterName = this.getVisibleNameFilter();
     return (
+      
       <div>
         <h1>Phonebook</h1>
-        {/* <ContactForm onSubmit={this.formSubmitHandler} /> */}
-        <form onSubmit={this.handleSubmitForm}>
-                <label>
-                    Name
-                    <input
-                    type="text"
-                    name="name"
-                    value={this.state.name}
-                    pattern="^[a-zA-Zа-яА-Я]+(([' -][a-zA-Zа-яА-Я ])?[a-zA-Zа-яА-Я]*)*$"
-                    title="Name may contain only letters, apostrophe, dash and spaces. For example Adrian, Jacob Mercer, Charles de Batz de Castelmore d'Artagnan"
-                    required
-                    onChange={this.handleChange}
-                    />
-                </label>
-                <label>
-                    Number
-                    <input
-                        type="tel"
-                        name="number"
-                        value={this.state.number}
-                        onChange={this.handleChange}
-                        pattern="\+?\d{1,4}?[-.\s]?\(?\d{1,3}?\)?[-.\s]?\d{1,4}[-.\s]?\d{1,4}[-.\s]?\d{1,9}"
-                        title="Phone number must be digits and can contain spaces, dashes, parentheses and can start with +"
-                        required
-                        />
-                </label>
-                {/* <input type="password" name="password" /> */}
-                <button type="submit">Add contact</button>
-            </form>
+        <ContactForm onSubmit={this.formSubmitHandler} />
+        
         <div>
           <h2>Contacts</h2>
+          <Filter value={filter} onChange={this.handleChangeFilter} />
           <ul>
-            <li>{}</li>
+            <ContactsList contacts={filterName} onDelContact={this.deleteContact} />
           </ul>
         </div>
         <GlobalStyle />
       </div>
-      
     );
   }
 }

@@ -1,14 +1,18 @@
-import { Component } from "react";
+import React, { Component } from "react";
+import { nanoid } from 'nanoid'
 
-
-
-export class ContactForm extends Component {
+class ContactForm extends Component {
     state = {
         contacts: [],
         name: '',
         number: ''
     }
-    
+    reset = () => {
+        this.setState({
+            name: '',
+            number: '',
+        })
+    }
     handleChange = evnt => {
         console.log(evnt.currentTarget.value);
         const { name, value } = evnt.currentTarget
@@ -20,11 +24,11 @@ export class ContactForm extends Component {
 
     handleSubmitForm = e => {
         e.preventDefault();
-        const { contacts, name } = this.state;
+        const { contacts, name, number } = this.state;
+        contacts.push({name, number, id: nanoid()});
+        console.log(this.state);
 
-        contacts.push(name);
-
-        this.props.onSubmit(this.state)
+        this.reset()
 
     }
 
@@ -61,3 +65,5 @@ export class ContactForm extends Component {
         )
     }
 }
+
+export default ContactForm;
