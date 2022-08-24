@@ -1,6 +1,6 @@
 import { Component } from "react";
 import { GlobalStyle } from './GlobalStyle';
-
+import { nanoid } from 'nanoid'
 import Filter from "./Filter";
 import ContactsList from "./ContactsList";
 import ContactForm from "./ContactForm";
@@ -19,26 +19,37 @@ export class App extends Component {
 
   
 
-  handleChange = evnt => {
-        console.log(evnt.currentTarget.value);
-        const { name, value } = evnt.currentTarget
-        this.setState({
-          [name] : value
-        })
-    }
+  // handleChange = evnt => {
+  //       console.log(evnt.currentTarget.value);
+  //       const { name, value } = evnt.currentTarget
+  //       this.setState({
+  //         [name] : value
+  //       })
+  //   }
   
   handleChangeFilter = e => {
     console.log(e.currentTarget.value);
     this.setState({ filter: e.currentTarget.value });
   };
 
-  formSubmitHandler = data => {
-    console.log(data);
+  contactsFormSubmitHandler = data => {
+    
+    const newContact = {
+      id: nanoid(),
+      name: data.name,
+      number: data.number,
+    };
+    const isInName = newContact.name.toLowerCase();
+    this.state.contacts.find(contact => contact.name.toLowerCase() === isInName)
+      ? alert(data.name + ' is already in contacts')
+      : this.setState(({ contacts }) => ({
+          contacts: [newContact, ...contacts],
+      }));
   }
 
   getVisibleNameFilter = () => {
     const { filter,contacts } = this.state
-    const normalFilter = filter.toLowerCase();
+    const normalFilter = filter.toLowerCase().trim();
     
     return contacts.filter(contact =>
       contact.name.toLowerCase().includes(normalFilter)
@@ -59,7 +70,7 @@ export class App extends Component {
       
       <div>
         <h1>Phonebook</h1>
-        <ContactForm onSubmit={this.formSubmitHandler} />
+        <ContactForm onSubmit={this.contactsFormSubmitHandler} />
         
         <div>
           <h2>Contacts</h2>
